@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -25,9 +24,3 @@ dist-ssr
 *.sw?
 
 .vercel
-=======
-node_modules
-.env
-dist
-build
->>>>>>> 68e2272cf2fa8622ba51762b05293ebce01a5009
