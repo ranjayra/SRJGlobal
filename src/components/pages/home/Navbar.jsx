@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import logo from "../../../assets/dd.png";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   const navLinks = [
     { name: "HOME", path: "/" },
@@ -16,38 +15,20 @@ const Navbar = () => {
     { name: "PRICING", path: "/pricing" },
   ];
 
-  // 🔥 Scroll Detection
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
-    <nav
-      className={`fixed w-full top-0 z-50 transition-all duration-500 ${
-        scrolled ? "bg-white shadow-lg py-3" : "bg-transparent py-5 "
-      }`}
-    >
+    <nav className="fixed w-full top-0 z-50 bg-white shadow-lg py-3">
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
         {/* LOGO */}
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-14 h-14   overflow-hidden transition duration-300 group-hover:scale-110">
+          <div className="w-14 h-14 overflow-hidden transition duration-300 group-hover:scale-110">
             <img src={logo} alt="logo" className="w-full h-full object-cover" />
           </div>
 
           <div className="flex flex-col leading-tight">
-            <h1
-              className={`text-xl md:text-xl font-bold tracking-wide transition duration-300 ${
-                scrolled ? "text-gray-900" : "text-white"
-              }`}
-            >
+            <h1 className="text-xl md:text-xl font-bold tracking-wide text-gray-900">
               Gaming & Software
             </h1>
-
-            <span className="text-sm md:text-xl font-bold text-blue-500 tracking-wider">
+            <span className="text-sm md:text-xl font-bold text-blue-600 tracking-wider">
               Solutions
             </span>
           </div>
@@ -60,8 +41,8 @@ const Navbar = () => {
               {({ isActive }) => (
                 <div
                   className={`relative px-3 py-2 transition-all duration-300 cursor-pointer
-          ${isActive ? "text-blue-600" : scrolled ? "text-gray-700" : "text-white"}
-          hover:-translate-y-1 hover:scale-105 hover:text-blue-600`}
+                  ${isActive ? "text-blue-600" : "text-gray-700"}
+                  hover:-translate-y-1 hover:scale-105 hover:text-blue-600`}
                 >
                   {link.name}
 
@@ -80,8 +61,6 @@ const Navbar = () => {
           <Link to="/contact">
             <button className="relative px-6 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold overflow-hidden group">
               <span className="relative z-10">Contact Us</span>
-
-              {/* Glow Effect */}
               <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-blue-500 opacity-0 group-hover:opacity-100 transition duration-300 blur-xl"></span>
             </button>
           </Link>
@@ -91,12 +70,9 @@ const Navbar = () => {
         <div className="lg:hidden">
           <button onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? (
-              <X size={28} className={scrolled ? "text-black" : "text-white"} />
+              <X size={28} className="text-black" />
             ) : (
-              <Menu
-                size={28}
-                className={scrolled ? "text-black" : "text-white"}
-              />
+              <Menu size={28} className="text-black" />
             )}
           </button>
         </div>
@@ -123,7 +99,7 @@ const Navbar = () => {
           ))}
 
           <Link to="/contact">
-            <button className="bg-blue-600 text-white py-2 p-2 rounded-lg mt-2">
+            <button className="bg-blue-600 text-white py-2 rounded-lg mt-2">
               Contact Us
             </button>
           </Link>

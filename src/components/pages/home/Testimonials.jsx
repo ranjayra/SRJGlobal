@@ -11,6 +11,7 @@ const testimonials = [
   {
     name: "Ananya Verma",
     role: "Senior Designer",
+  
     image: "https://randomuser.me/api/portraits/women/44.jpg",
     text: "Amazing UI/UX and development support. They understand requirements and deliver beyond expectations.",
   },

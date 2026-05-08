@@ -1,4 +1,5 @@
 import React from "react";
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,6 +8,7 @@ import {
 } from "react-router-dom";
 
 // Components
+import Welcome from "./components/pages/home/Welcome";
 import Home from "./components/pages/Home";
 import FloatingContact from "./components/pages/home/FloatingContact";
 import Services from "./components/pages/Service/ServicesPage";
@@ -47,7 +49,8 @@ const AppContent = () => {
       {!shouldHide && <FloatingContact />}
 
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Welcome />} />
+        <Route path="/home" element={<Home />}/>
         <Route path="/services" element={<Services />} />
         <Route path="/services/:id" element={<ServiceDetail />} />
         <Route path="/blogs" element={<Blogs />} />
@@ -58,7 +61,7 @@ const AppContent = () => {
         <Route path="/about" element={<AboutPage />} />
 
         {/* ADMIN ROUTES */}
-        <Route path="/srj/admin/login" element={<AdminLogin />} />
+        <Route path="/gs/admin/login" element={<AdminLogin />} />
         <Route path="/srj/panel/dashboard" element={<Dashbaord />} />
         <Route path="/service-policy" element={<ServicePolicy />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />

@@ -5,17 +5,36 @@ import { Eye, User, Tag } from "lucide-react";
 import Navbar from "../home/Navbar";
 import Footer from "../home/Footer";
 
-const API = "http://localhost:5000/api/blogs";
+
+
+const BASE = import.meta.env.VITE_API_BASE_URL;
+const API = `${BASE}/api/blogs`;
+
+// const API = "http://localhost:5000/api/blogs";
+
+const imgSrc = (path) =>
+  !path
+    ? "/placeholder.jpg"
+    : path.startsWith("/uploads")
+      ? `${BASE}${path}`
+      : path;
+
 
 export default function BlogDetail() {
   const { slug } = useParams();
   const [blog, setBlog] = useState(null);
 
-  useEffect(() => {
-    axios.get(`${API}/getSingleBlog/${slug}`).then((res) => {
-      setBlog(res.data.data);
-    });
-  }, [slug]);
+ useEffect(() => {
+   axios
+     .get(`${API}/getSingleBlog/${slug}`)
+     .then((res) => {
+       setBlog(res.data.data);
+     })
+     .catch((err) => {
+       console.error("Blog Detail Error:", err);
+       alert("Failed to load blog");
+     });
+ }, [slug]);
 
   if (!blog) {
     return <div className="text-white p-10">Loading...</div>;
@@ -29,7 +48,7 @@ export default function BlogDetail() {
         {/* HERO IMAGE */}
         <div className="relative w-full h-[400px] md:h-[500px]">
           <img
-            src={`http://localhost:5000${blog.image}`}
+            src={imgSrc(blog.image)}
             className="w-full h-full object-cover"
             alt="blog"
           />

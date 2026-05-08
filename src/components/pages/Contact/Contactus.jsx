@@ -8,6 +8,9 @@ import {
 } from "react-icons/fa";
 import Navbar from "../home/Navbar";
 import Footer from "../home/Footer";
+import Swal from "sweetalert2";
+
+const API = import.meta.env.VITE_API_BASE_URL;
 
 const ContactUs = () => {
   // STATE
@@ -30,45 +33,60 @@ const ContactUs = () => {
   };
 
   // HANDLE SUBMIT
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (
-      !formData.name ||
-      !formData.email ||
-      !formData.phone ||
-      !formData.service ||
-      !formData.message
-    ) {
-      alert("Please fill all fields");
-      return;
-    }
+  if (
+    !formData.name ||
+    !formData.email ||
+    !formData.phone ||
+    !formData.service ||
+    !formData.message
+  ) {
+    Swal.fire({
+      icon: "warning",
+      title: "Missing Fields",
+      text: "Please fill all fields",
+      background: "#0F172A",
+      color: "#fff",
+    });
+    return;
+  }
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const res = await axios.post(
-        "http://localhost:5000/api/contact/create",
-        formData,
-      );
+    const res = await axios.post(`${API}/api/contact/create`, formData);
 
-      alert(res.data.message);
+    Swal.fire({
+      icon: "success",
+      title: "Message Sent 🚀",
+      text: res.data.message,
+      background: "#0F172A",
+      color: "#fff",
+    });
 
-      // reset form
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        service: "",
-        message: "",
-      });
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      service: "",
+      message: "",
+    });
+  } catch (error) {
+    console.error(error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Oops!",
+      text: error?.response?.data?.message || "Something went wrong",
+      background: "#0F172A",
+      color: "#fff",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <>
@@ -78,7 +96,7 @@ const ContactUs = () => {
         {/* HERO */}
         <div className="bg-gradient-to-r from-[#0F172A] via-[#2563EB] to-[#7C3AED] pt-34 py-16 px-6 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Contact SRJ Global Technology
+            Contact Gaming & Software Solutions
           </h1>
           <p className="text-gray-300 max-w-2xl mx-auto">
             Have a project in mind? Let’s talk. We’re here to help you grow your
@@ -220,7 +238,7 @@ const ContactUs = () => {
               <FaEnvelope className="text-[#7C3AED] text-2xl" />
               <div>
                 <h3 className="font-semibold text-lg">Email</h3>
-                <p className="text-gray-400">info@srjglobaltechnology.com</p>
+                <p className="text-gray-400">info@gaminandSoftware.com</p>
               </div>
             </div>
 
@@ -234,7 +252,7 @@ const ContactUs = () => {
 
             {/* WHATSAPP */}
             <a
-              href="https://wa.me/919876543210"
+              href="https://wa.me/919266706599?text=Hello%20Gaming%20%26%20Software%20Solutions%20Team%20%0A%0AI%20am%20interested%20in%20exploring%20your%20services.%0A%0APlease%20share%20more%20details."
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-3 bg-green-500 py-3 rounded-xl font-semibold hover:bg-green-600 transition shadow-lg"
@@ -264,7 +282,7 @@ const ContactUs = () => {
           </p>
 
           <a
-            href="https://wa.me/919876543210"
+            href="https://wa.me/919266706599?text=Hello%20Gaming%20%26%20Software%20Solutions%20Team%20%0A%0AI%20am%20interested%20in%20exploring%20your%20services.%0A%0APlease%20share%20more%20details."
             className="bg-[#38BDF8] text-black px-6 py-3 rounded-lg font-semibold hover:bg-[#0EA5E9] transition"
           >
             Contact Now

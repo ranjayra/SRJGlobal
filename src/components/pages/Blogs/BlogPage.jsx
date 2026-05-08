@@ -1,10 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Navbar from "../home/Navbar";
 import Footer from "../home/Footer";
 
-const API = "http://localhost:5000/api/blogs";
+const BASE = import.meta.env.VITE_API_BASE_URL;
+
+
+const API = `${BASE}/api/blogs`;
+// const API = "http://localhost:5000/api/blogs";
+
+
+const imgSrc = (path) =>
+  !path ? null : path.startsWith("/uploads") ? `${BASE}${path}` : path;
+
+
+
 
 export default function Blogs() {
   const [blogs, setBlogs]         = useState([]);
@@ -12,29 +23,44 @@ export default function Blogs() {
   const [activeTab, setActiveTab] = useState("All");
   const [loading, setLoading]     = useState(true);
 
+
+
+
+
   useEffect(() => {
     setLoading(true);
-    axios.get(`${API}/getAllBlogs`).then((res) => {
-      setBlogs(res.data.data || []);
-      setLoading(false);
-    }).catch(() => setLoading(false));
+    axios
+      .get(`${API}/getAllBlogs`)
+      .then((res) => {
+        setBlogs(res.data.data || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Blog Fetch Error:", err);
+        setLoading(false);
+      });
   }, []);
 
   // ── unique categories extracted from actual blog data ──
-  const categories = [
+const categories = useMemo(
+  () => [
     "All",
     ...Array.from(new Set(blogs.map((b) => b.category).filter(Boolean))),
-  ];
+  ],
+  [blogs],
+);
 
   // ── FIXED FILTER: both search + category work together ──
-  const filtered = blogs.filter((b) => {
+const filtered = useMemo(() => {
+  return blogs.filter((b) => {
     const q = search.trim().toLowerCase();
+
     const matchSearch =
       q === "" ||
       b.title.toLowerCase().includes(q) ||
-      (b.shortDesc  || "").toLowerCase().includes(q) ||
-      (b.excerpt    || "").toLowerCase().includes(q) ||
-      (b.category   || "").toLowerCase().includes(q);
+      (b.shortDesc || "").toLowerCase().includes(q) ||
+      (b.excerpt || "").toLowerCase().includes(q) ||
+      (b.category || "").toLowerCase().includes(q);
 
     const matchCat =
       activeTab === "All" ||
@@ -42,6 +68,7 @@ export default function Blogs() {
 
     return matchSearch && matchCat;
   });
+}, [blogs, search, activeTab]);
 
   // featured only on default view (no search / no tab filter)
   const showFeatured = !search.trim() && activeTab === "All";
@@ -52,10 +79,7 @@ export default function Blogs() {
     <>
       <Navbar />
 
-      <div
-        className="min-h-screen"
-        style={{ background: "#0F172A",  }}
-      >
+      <div className="min-h-screen" style={{ background: "#0F172A" }}>
         {/* ══ HERO BANNER ═══════════════════════════════════════ */}
         <div
           className="relative overflow-hidden"
@@ -100,7 +124,7 @@ export default function Blogs() {
                 border: "1px solid #2563EB40",
               }}
             >
-              ✦ SRJ Blog
+              ✦ Gaming & Software Blog
             </span>
 
             <h1
@@ -126,7 +150,8 @@ export default function Blogs() {
               className="text-base md:text-lg max-w-md mx-auto mb-10"
               style={{ color: "#94a3b8", lineHeight: 1.7 }}
             >
-              Tech tutorials, case studies and deep-dives from the SRJ team.
+              Tech tutorials, case studies and deep-dives from the Gaming &
+              Software team.
             </p>
 
             {/* Search */}
@@ -341,7 +366,7 @@ export default function Blogs() {
                             className="text-sm font-semibold"
                             style={{ color: "#0F172A" }}
                           >
-                            {featured.author || "SRJ Team"}
+                            {featured.author || "Gaming & Software Team"}
                           </p>
                           <p className="text-xs" style={{ color: "#94a3b8" }}>
                             {featured.readTime || "5 min read"}
@@ -360,16 +385,33 @@ export default function Blogs() {
                       </div>
                     </div>
 
-                    <div className="md:col-span-3 overflow-hidden" style={{ minHeight: "280px", background: "#f1f5f9" }}>
+                    <div
+                      className="md:col-span-3 overflow-hidden"
+                      style={{ minHeight: "280px", background: "#f1f5f9" }}
+                    >
                       {featured.image ? (
-                        <img src={`http://localhost:5000${featured.image}`} alt={featured.title}
+                        <img
+                          src={`${BASE}${featured.image}`}
+                          alt={featured.title}
                           className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-105"
-                          style={{ minHeight: "280x" }} />
+                          style={{ minHeight: "280x" }}
+                        />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center" style={{ minHeight: "280px" }}>
-                          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1">
-                            <rect x="3" y="3" width="18" height="18" rx="2"/>
-                            <circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>
+                        <div
+                          className="w-full h-full flex items-center justify-center"
+                          style={{ minHeight: "280px" }}
+                        >
+                          <svg
+                            width="48"
+                            height="48"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#cbd5e1"
+                            strokeWidth="1"
+                          >
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <path d="M21 15l-5-5L5 21" />
                           </svg>
                         </div>
                       )}
@@ -473,7 +515,7 @@ function BlogCard({ blog, index }) {
       >
         {blog.image ? (
           <img
-            src={`http://localhost:5000${blog.image}`}
+            src={imgSrc(blog.image)}
             alt={blog.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -539,7 +581,7 @@ function BlogCard({ blog, index }) {
           <div className="flex items-center gap-2">
             <Avatar name={blog.author || "S"} size={28} fontSize={10} />
             <span className="text-xs font-medium" style={{ color: "#475569" }}>
-              {blog.author || "SRJ Team"}
+              {blog.author || "Gaming & Software Team"}
             </span>
           </div>
           <div
